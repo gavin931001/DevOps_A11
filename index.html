@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevSecOps 研討會報名</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f0f2f5; }
+        .container { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 400px; }
+        h2 { text-align: center; color: #333; }
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; margin-bottom: .5rem; color: #666; }
+        input { width: 100%; padding: .5rem; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;}
+        button { width: 100%; padding: .75rem; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 1rem; }
+        button:hover { background-color: #0056b3; }
+        
+        /* Feature: Countdown Timer Style */
+        .timer-alert { background-color: #ffebee; color: #c62828; padding: 10px; border-radius: 4px; margin-bottom: 15px; text-align: center; font-weight: bold; border: 1px solid #ef9a9a; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="countdown-section" style="display: none;">
+        <div class="timer-alert">
+            ⚠️ 只剩 <span id="time">05:00</span> 報名即將截止！
+        </div>
+    </div>
+
+    <h2>2025 技術年會報名</h2>
+
+    <form id="registration-form">
+        <div id="form-fields">
+            </div>
+        
+        <button type="button" onclick="alert('報名資料已送出！(模擬)')">立即報名</button>
+    </form>
+</div>
+
+<script>
+    // ==========================================
+    // [DEV] FEATURE TOGGLES CONFIGURATION
+    // 開發者筆記：修改這裡的 true/false 來控制功能開關
+    // 在真實環境中，這些值會來自後端 API 或 Config 檔
+    // ==========================================
+    const featureFlags = {
+        ENABLE_COUNTDOWN_TIMER: true,  // 假設一：急迫感行銷 (倒數計時)
+        ENABLE_SIMPLE_FORM: false      // 假設二：簡化表單 (只留Email)
+    };
+
+    // ==========================================
+    // 邏輯實作
+    // ==========================================
+
+    // 1. 處理倒數計時器 (Hypothesis 1)
+    if (featureFlags.ENABLE_COUNTDOWN_TIMER) {
+        document.getElementById('countdown-section').style.display = 'block';
+        startTimer(5 * 60); // 5分鐘倒數
+    }
+
+    // 2. 處理表單欄位 (Hypothesis 2)
+    const formContainer = document.getElementById('form-fields');
+    
+    if (featureFlags.ENABLE_SIMPLE_FORM) {
+        // Toggle ON: 極簡模式 (只有 Email)
+        console.log("Feature Toggle: Simple Form is ON");
+        formContainer.innerHTML = `
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" placeholder="請輸入您的 Email" required>
+            </div>
+        `;
+    } else {
+        // Toggle OFF: 完整模式 (傳統表單)
+        console.log("Feature Toggle: Simple Form is OFF");
+        formContainer.innerHTML = `
+            <div class="form-group">
+                <label>姓名 (Name)</label>
+                <input type="text" placeholder="真實姓名" required>
+            </div>
+            <div class="form-group">
+                <label>電話 (Phone)</label>
+                <input type="tel" placeholder="聯絡電話" required>
+            </div>
+            <div class="form-group">
+                <label>公司/學校 (Organization)</label>
+                <input type="text" placeholder="所屬單位" required>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" placeholder="請輸入您的 Email" required>
+            </div>
+        `;
+    }
+
+    // 倒數計時小工具
+    function startTimer(duration) {
+        let timer = duration, minutes, seconds;
+        setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+            document.querySelector('#time').textContent = minutes + ":" + seconds;
+            if (--timer < 0) timer = 0;
+        }, 1000);
+    }
+</script>
+
+</body>
+</html>
