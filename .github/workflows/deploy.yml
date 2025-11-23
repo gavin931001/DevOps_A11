@@ -24,9 +24,9 @@ jobs:
       # 演示 Secret Management
       - name: Print Secret Status (Do not print actual secret!)
         env:
-          MY_SECRET_TOKEN: ${{ secrets.DEPLOY_TOKEN }} 
+          MY_SECRET_TOKEN: ${{ secrets.DB_PASSWORD }} 
         run: |
-          if [ -z "$MY_SECRET_TOKEN" ]; then
+          if [ -z "$MY_DB_PASSWORD" ]; then
             echo "Error: Secret is not set (Expected if you haven't set it in Repo Settings)."
           else
             echo "Success: Secret injected securely into the CI pipeline."
