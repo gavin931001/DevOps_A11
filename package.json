@@ -1,0 +1,12 @@
+{
+  "name": "webinar-registration-devsecops",
+  "version": "1.0.0",
+  "description": "A simple project to demonstrate DevSecOps practices",
+  "main": "index.html",
+  "dependencies": {
+    "lodash": "4.17.15"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
