@@ -1,3 +1,19 @@
+<script>
+    // ==========================================
+    // [A&A Security Check]
+    // 檢查使用者有沒有登入 (有沒有 Token)
+    // 如果沒登入，直接踢回登入頁 (index.html)
+    // ==========================================
+    const token = sessionStorage.getItem('auth_token');
+    if (!token) {
+        alert('⛔ 未授權！請先登入。');
+        window.location.href = 'index.html';
+    }
+
+    // ... 下面接著原本的 featureFlags 程式碼 ...
+    const featureFlags = { ... }
+</script>
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
