@@ -4,36 +4,42 @@ on:
   push:
     branches: [ "main" ]
 
+# 設定 GITHUB_TOKEN 的權限，允許部署 GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4  # 升級到 v4
 
-      # 演示 Secret Management (報告重點截圖處)
-      # 我們從 GitHub Secrets 讀取 DEPLOY_TOKEN，而不是寫死在檔案裡
+      # 演示 Secret Management
       - name: Print Secret Status (Do not print actual secret!)
         env:
-          # 這裡對應到你在 GitHub Settings > Secrets 設定的變數
           MY_SECRET_TOKEN: ${{ secrets.DEPLOY_TOKEN }} 
         run: |
           if [ -z "$MY_SECRET_TOKEN" ]; then
-            echo "Error: Secret is not set."
+            echo "Error: Secret is not set (Expected if you haven't set it in Repo Settings)."
           else
             echo "Success: Secret injected securely into the CI pipeline."
           fi
 
-      # 演示自動化部署到 GitHub Pages
       - name: Setup Pages
-        uses: actions/configure-pages@v3
+        uses: actions/configure-pages@v5  # 升級到 v5
       
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3  # 升級到 v3 (修復報錯關鍵)
         with:
           path: '.'
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4  # 升級到 v4
