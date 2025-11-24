@@ -173,10 +173,52 @@
     }
 
     // 處理表單送出
-    function handleSubmit(event) {
-        event.preventDefault();
+//    function handleSubmit(event) {
+//        event.preventDefault();
         // 這裡可以接 API，目前用 Alert 模擬成功
-        alert('🎉 報名成功！資料已送出。');
+//        alert('🎉 報名成功！資料已送出。');
+//    }
+
+    // =========================================================
+    // 4. [Data Collection] Google Forms 串接 (Mock Backend)
+    // =========================================================
+    
+    function handleSubmit(event) {
+        event.preventDefault(); // 阻止瀏覽器跳頁
+
+        // 1. 準備要送出的資料
+        // 注意：這裡的 ID 必須換成你自己 Google Form 的 entry.xxxxxx
+        const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSeRMY2bHfChtkKF9oDw-pIJknCf95SACgEStZxJqh0LUDV75Q/formResponse'; 
+        const FIELD_EMAIL_ID = 'entry.135039649';   // 換成你的 Email 欄位 ID
+        const FIELD_VERSION_ID = 'entry.1644182510'; // 換成你的 Version 欄位 ID
+
+        // 取得使用者輸入的 Email
+        const userEmail = document.getElementById('email').value;
+        
+        // 判斷當前是用哪個版本 (為了做 A/B Testing 數據分析)
+        const currentVersion = featureFlags.ENABLE_SIMPLE_FORM ? "Simple_Form_v2" : "Full_Form_v1";
+
+        // 2. 建立 FormData 物件
+        const formData = new FormData();
+        formData.append(FIELD_EMAIL_ID, userEmail);
+        formData.append(FIELD_VERSION_ID, currentVersion);
+
+        // 3. 使用 fetch 發送請求 (Mode: no-cors 是關鍵)
+        // 因為 Google 不允許跨網域讀取回應，我們設為 no-cors 
+        // 這樣雖然看不到成功訊息，但資料實際上會送進去
+        fetch(GOOGLE_FORM_URL, {
+            method: 'POST',
+            body: formData,
+            mode: 'no-cors' 
+        }).then(() => {
+            // 成功後的動作
+            alert('🎉 報名成功！數據已傳送至雲端 (Google Sheet)。');
+            // 可以選擇重新導向或清空表單
+            // window.location.reload();
+        }).catch((error) => {
+            console.error('Error:', error);
+            alert('⚠️ 系統忙碌中，但您的請求可能已紀錄。');
+        });
     }
 
     // 登出功能 (清除 Session)
