@@ -214,6 +214,7 @@
             // 成功後的動作
             alert('🎉 報名成功！數據已傳送至雲端 (Google Sheet)。');
             // 可以選擇重新導向或清空表單
+            window.location.href = 'index.html';
             // window.location.reload();
         }).catch((error) => {
             console.error('Error:', error);
