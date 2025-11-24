@@ -212,11 +212,13 @@
             mode: 'no-cors' 
         }).then(() => {
             // 成功後的動作
-            alert('🎉 報名成功！數據已傳送至雲端 (Google Sheet)。');
-            // 可以選擇重新導向或清空表單
+            alert('🎉 報名成功！資料已送出，即將回到登入頁面。');
+            
+            // 1. [Security] 清除 Session (自動登出)
             sessionStorage.removeItem('auth_token');
+            
+            // 2. [Redirect] 跳轉回登入頁 (index.html)
             window.location.href = 'index.html';
-            // window.location.reload();
         }).catch((error) => {
             console.error('Error:', error);
             alert('⚠️ 系統忙碌中，但您的請求可能已紀錄。');
