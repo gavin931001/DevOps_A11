@@ -7,6 +7,7 @@ import random
 import logging
 import psutil # <--- 新增這行
 import os     # <--- 新增這行
+import math
 
 # 1. 初始化 App
 app = FastAPI()
@@ -106,3 +107,12 @@ def get_stats():
             "memory_mb": round(memory_usage, 2)
         }
     }
+
+# 新增這個 API: 讓 CPU 故意運算 n 秒
+@app.post("/stress/{seconds}")
+def stress_cpu(seconds: int):
+    end_time = time.time() + seconds
+    # 進行大量的數學運算來消耗 CPU
+    while time.time() < end_time:
+        math.sqrt(random.randint(1, 10000)) 
+    return {"message": f"CPU burned for {seconds} seconds"}
