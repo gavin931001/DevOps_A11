@@ -31,27 +31,27 @@
 
 <script>
     function handleLogin(event) {
-        event.preventDefault(); // 阻止表單預設送出行為
-
+        event.preventDefault();
         const user = document.getElementById('username').value;
         const pass = document.getElementById('password').value;
-
-        // ============================================
-        // [Mock Auth] 模擬後端驗證
-        // 注意：在真實 DevSecOps 中，這裡應該是呼叫 API
-        // 絕對不能像這樣把密碼寫在前端 JS 裡
-        // 但為了作業展示 "流程" (A&A)，我們先這樣模擬
-        // ============================================
-        if (user === 'admin' && pass === '1234') {
-            // 登入成功，將 Token 存入 Session Storage (模擬 Session)
-            sessionStorage.setItem('auth_token', 'mock-secure-token-123');
-            
-            // 跳轉到報名頁面
+        fetch('http://localhost:3000/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: user, password: pass })
+        })
+        .then(async res => {
+            if (!res.ok) {
+                throw new Error('帳號或密碼錯誤');
+            }
+            return res.json();
+        })
+        .then(data => {
+            sessionStorage.setItem('auth_token', data.token);
             window.location.href = 'registration.html';
-        } else {
-            // 登入失敗
+        })
+        .catch(() => {
             document.getElementById('error').style.display = 'block';
-        }
+        });
     }
 </script>
 
