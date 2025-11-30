@@ -5,6 +5,8 @@ from prometheus_fastapi_instrumentator import Instrumentator
 import time
 import random
 import logging
+import psutil # <--- 新增這行
+import os     # <--- 新增這行
 
 # 1. 初始化 App
 app = FastAPI()
@@ -76,10 +78,31 @@ def set_chaos(state: str):
         logger.info("Chaos mode disabled")
     return {"chaos_mode": CHAOS_MODE}
 
-# [Task 1] 簡單的 Dashboard 資料介面
+# # [Task 1] 簡單的 Dashboard 資料介面
+# @app.get("/stats")
+# def get_stats():
+#     return {
+#         "total_registrations": len(db),
+#         "chaos_mode": CHAOS_MODE
+#     }
+
+# [Task 1] 進階儀表板資料介面 (包含系統資源監控)
 @app.get("/stats")
 def get_stats():
+    # 取得目前 Python Process 的資訊
+    process = psutil.Process(os.getpid())
+
+    # 取得記憶體使用量 (轉成 MB)
+    memory_usage = process.memory_info().rss / 1024 / 1024 
+
+    # 取得 CPU 使用率 (這是瞬間值，可能會有波動)
+    cpu_usage = process.cpu_percent(interval=None)
+
     return {
         "total_registrations": len(db),
-        "chaos_mode": CHAOS_MODE
+        "chaos_mode": CHAOS_MODE,
+        "system_metrics": {
+            "cpu_percent": cpu_usage,
+            "memory_mb": round(memory_usage, 2)
+        }
     }
