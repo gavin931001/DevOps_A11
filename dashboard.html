@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
@@ -64,6 +64,105 @@
         }
 
         // 每 2 秒更新一次
+        setInterval(fetchStats, 2000);
+        fetchStats();
+    </script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRE 監控儀表板</title>
+    <style>
+        body { font-family: 'Courier New', monospace; background: #1a1a1a; color: #00ff00; padding: 20px; }
+        .card { border: 1px solid #333; padding: 20px; margin-bottom: 20px; background: #222; border-radius: 8px; }
+        h1 { color: #fff; border-bottom: 2px solid #00ff00; padding-bottom: 10px; }
+        .metric-value { font-size: 2.5em; font-weight: bold; margin-top: 10px; }
+        .status-ok { color: #00ff00; }
+        .status-error { color: #ff3333; text-shadow: 0 0 5px #ff0000; animation: blink 1s infinite; }
+        
+        /* 按鈕樣式 */
+        .control-panel { margin-top: 20px; display: flex; gap: 10px; }
+        button { padding: 15px 25px; font-size: 1.2em; cursor: pointer; border: none; border-radius: 5px; font-family: monospace; font-weight: bold; transition: 0.2s; }
+        .btn-chaos { background: #ff3333; color: white; }
+        .btn-chaos:hover { background: #cc0000; }
+        .btn-fix { background: #00cc00; color: white; }
+        .btn-fix:hover { background: #009900; }
+        
+        @keyframes blink { 50% { opacity: 0.5; } }
+    </style>
+</head>
+<body>
+    <h1>📟 SRE Control Center</h1>
+    
+    <div class="card">
+        <h3>System Health</h3>
+        <div id="status-indicator" class="metric-value status-ok">CONNECTING...</div>
+    </div>
+
+    <div class="card">
+        <h3>Total Registrations</h3>
+        <div id="total-count" class="metric-value">--</div>
+    </div>
+
+    <div class="card">
+        <h3>🚨 Chaos Injection Control</h3>
+        <div id="chaos-state" class="metric-value">OFF</div>
+        
+        <div class="control-panel">
+            <button class="btn-chaos" onclick="triggerChaos('on')">🔥 INJECT FAILURE</button>
+            <button class="btn-fix" onclick="triggerChaos('off')">🛡️ RESTORE SYSTEM</button>
+        </div>
+    </div>
+
+    <script>
+        // 記得換成你的 Render 後端網址
+        const API_BASE = 'https://devops-a11.onrender.com';
+
+        // 1. 取得狀態
+        async function fetchStats() {
+            try {
+                const response = await fetch(`${API_BASE}/stats`);
+                const data = await response.json();
+
+                document.getElementById('total-count').innerText = data.total_registrations;
+                
+                const chaosElem = document.getElementById('chaos-state');
+                const statusElem = document.getElementById('status-indicator');
+
+                if (data.chaos_mode) {
+                    chaosElem.innerText = "⚠️ ACTIVE";
+                    chaosElem.className = "metric-value status-error";
+                    statusElem.innerText = "CRITICAL / DEGRADED";
+                    statusElem.className = "metric-value status-error";
+                } else {
+                    chaosElem.innerText = "INACTIVE";
+                    chaosElem.className = "metric-value status-ok";
+                    statusElem.innerText = "HEALTHY";
+                    statusElem.className = "metric-value status-ok";
+                }
+            } catch (e) {
+                console.error(e);
+                document.getElementById('status-indicator').innerText = "DISCONNECTED";
+                document.getElementById('status-indicator').className = "metric-value status-error";
+            }
+        }
+
+        // 2. 控制 Chaos (這就是不用 curl 的方法)
+        async function triggerChaos(state) {
+            try {
+                // 用 fetch 發送 POST 請求
+                await fetch(`${API_BASE}/chaos/${state}`, { method: 'POST' });
+                alert(`Chaos Mode turned ${state.toUpperCase()}!`);
+                fetchStats(); // 立即更新畫面
+            } catch (e) {
+                alert("Command Failed!");
+            }
+        }
+
         setInterval(fetchStats, 2000);
         fetchStats();
     </script>
