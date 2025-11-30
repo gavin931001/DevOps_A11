@@ -31,7 +31,7 @@ Instrumentator().instrument(app).expose(app)
 db = []
 
 # Chaos 開關 (Task 3: Chaos Engineering)
-CHAOS_MODE = False
+CHAOS_MODE = True
 
 # 定義資料格式
 class Registration(BaseModel):
