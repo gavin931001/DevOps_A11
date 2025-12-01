@@ -105,7 +105,7 @@
                 const mem = data.system_metrics.memory_mb;
 
                 document.getElementById('cpu-text').innerText = cpu + '%';
-                document.getElementById('cpu-bar').style.width = Math.min(cpu, 100) + '%'; 
+                document.getElementById('cpu-bar').style.width = Math.min(cpu * 3, 100) + '%'; 
 
                 document.getElementById('mem-text').innerText = mem + ' MB';
                 document.getElementById('mem-bar').style.width = Math.min(mem, 100) + '%'; // 假設 100MB 為滿
